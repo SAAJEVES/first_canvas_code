@@ -57,10 +57,11 @@ class BackgroundCircle {
   constructor() {
     this.x = Math.floor(Math.random() * canvas.width);
     this.y = Math.floor(Math.random() * canvas.height);
-    this.size = 5;
+    this.size = 3;
     this.speedX = Math.floor(Math.random() * 3) - 1.5;
     this.speedY = Math.floor(Math.random() * 3) - 1.5;
-    this.color = Math.floor(Math.random() * 360) + 1;
+    this.colorHue = Math.floor(Math.random() * 360) + 1;
+    this.color = `hsl(${this.colorHue}, 100%, 50%)`
   }
 
   update() {
@@ -70,7 +71,7 @@ class BackgroundCircle {
   }
 
   draw() {
-    canvasContext.fillStyle = `hsl(${this.color}, 100%, 50%)`;
+    canvasContext.fillStyle = this.color;
     canvasContext.beginPath();
     canvasContext.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     canvasContext.fill();
@@ -78,7 +79,7 @@ class BackgroundCircle {
 }
 
 const initCircles = () => {
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 250; i++) {
     circlesArray.push(new BackgroundCircle());
   }
 }
@@ -103,6 +104,21 @@ const handleCircles = () => {
 
     if (circlesArray[i].y > canvas.height) {
       circlesArray[i]. y = 0;
+    }
+
+    for (let j = i; j < circlesArray.length; j++) {
+      const dx = circlesArray[i].x - circlesArray[j].x;
+      const dy = circlesArray[i].y - circlesArray[j].y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < 100) {
+        canvasContext.beginPath();
+        canvasContext.strokeStyle = circlesArray[i].color;
+        canvasContext.lineWidth = .4;
+        canvasContext.moveTo(circlesArray[i].x, circlesArray[i].y);
+        canvasContext.lineTo(circlesArray[j].x, circlesArray[j].y);
+        canvasContext.stroke();
+      }
     }
   }
 }
